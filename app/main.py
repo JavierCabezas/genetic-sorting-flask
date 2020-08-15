@@ -1,12 +1,21 @@
-from flask import Flask
+from flask import Flask, \
+    render_template, \
+    request, \
+    redirect, \
+    url_for
 
 app = Flask(__name__)
 
 
 @app.route("/")
-def hello():
-    return "Hello World from Flask in a uWSGI Nginx Docker container with \
-     Python 3.7 (from the example template)"
+def home():
+    return render_template("index.html", default_persons_per_group=3)
+
+
+@app.route('/reader', methods=['POST', 'GET'])
+def process_file():
+    if request.method == 'GET':
+        return redirect(url_for('home'))
 
 
 if __name__ == "__main__":
