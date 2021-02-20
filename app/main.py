@@ -3,9 +3,10 @@ from flask import Flask, \
     request, \
     redirect, \
     url_for
+from pyexcel_xlsx import get_data
+
 
 app = Flask(__name__)
-
 
 @app.route("/")
 def home():
@@ -16,6 +17,10 @@ def home():
 def process_file():
     if request.method == 'GET':
         return redirect(url_for('home'))
+    else:
+        file = request.files['file_to_upload']
+        data = get_data(file)
+        print("!")
 
 
 if __name__ == "__main__":
