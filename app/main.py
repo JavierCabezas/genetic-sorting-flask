@@ -5,6 +5,7 @@ from flask import Flask, \
     url_for
 from pyexcel_xlsx import get_data
 
+from models.person import Person
 
 app = Flask(__name__)
 
@@ -20,7 +21,9 @@ def process_file():
     else:
         file = request.files['file_to_upload']
         data = get_data(file)
-        print("!")
+        first_index = next(iter(data))
+        matrix = data[first_index][1:]
+        person_class = Person(matrix)
 
 
 if __name__ == "__main__":
