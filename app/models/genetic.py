@@ -6,7 +6,7 @@ from .person import Person
 
 
 class Genetic:
-    NUMBER_OF_LOOPS = 50000
+    NUMBER_OF_LOOPS = 5000
 
     persons_per_group: int
     person_class: Person
@@ -21,6 +21,9 @@ class Genetic:
         self.person_class = person
 
     def calculate(self):
+        """
+        Returns the best possible group found within the number of loops configured
+        """
         person_indexes = list(self.person_class.person_cache_dict_name_index.values())
         population_size = len(person_indexes)
         self.groups = person_indexes
@@ -36,7 +39,7 @@ class Genetic:
             if candidate_score > self.current_score:
                 is_candidate_group_better = True
             elif candidate_score == self.current_score:
-                candidate_std = Genetic.get_sub_group_std(self.get_sub_groups(self.groups), self.person_class)
+                candidate_std = Genetic.get_sub_group_std(self.get_sub_groups(candidate_group), self.person_class)
                 if candidate_std < self.current_std:
                     is_candidate_group_better = True
                 else:
@@ -67,6 +70,12 @@ class Genetic:
         :return:
         """
         return [ids[i:i + self.persons_per_group] for i in range(0, len(ids), self.persons_per_group)]
+
+    def number_of_sub_groups(self) -> int:
+        """
+        :return: int
+        """
+        return len(self.get_sub_groups(self.groups))
 
     @staticmethod
     def get_sub_group_std(separated_groups: List, person_class: Person):

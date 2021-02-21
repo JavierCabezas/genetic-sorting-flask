@@ -27,7 +27,7 @@ def process_file():
         person_class = Person(matrix)
         genetic_class = Genetic(person_class, 3)
         genetic_class.calculate()
-
+        return render_template("results.html", genetic_class=genetic_class)
 
 if __name__ == "__main__":
     # Only for debugging while developing

@@ -53,6 +53,9 @@ class Person:
             })
             self.person_cache_dict_name_index[name] = index
 
+    def number_of_persons(self) -> int:
+        return len(self.persons)
+
     def fill_preferences(self, matrix :List):
         """
         :param matrix:
