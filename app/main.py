@@ -26,6 +26,7 @@ def process_file():
         matrix = data[first_index][1:]
         person_class = Person(matrix)
         genetic_class = Genetic(person_class, 3)
+        genetic_class.calculate()
 
 
 if __name__ == "__main__":
