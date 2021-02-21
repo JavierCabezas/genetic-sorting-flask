@@ -6,6 +6,7 @@ from flask import Flask, \
 from pyexcel_xlsx import get_data
 
 from models.person import Person
+from models.genetic import Genetic
 
 app = Flask(__name__)
 
@@ -24,6 +25,7 @@ def process_file():
         first_index = next(iter(data))
         matrix = data[first_index][1:]
         person_class = Person(matrix)
+        genetic_class = Genetic(person_class, 3)
 
 
 if __name__ == "__main__":
