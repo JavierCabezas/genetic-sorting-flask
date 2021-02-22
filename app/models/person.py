@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 
 class Person:
@@ -7,6 +7,13 @@ class Person:
     EXCEL_COL_INDEX_PREF_2: int = 3
     EXCEL_COL_INDEX_NOPREF_1: int = 4
     EXCEL_COL_INDEX_NOPREF_2: int = 5
+
+    INDEXES_PREFERENCES: List = [
+        EXCEL_COL_INDEX_PREF_1,
+        EXCEL_COL_INDEX_PREF_2,
+        EXCEL_COL_INDEX_NOPREF_1,
+        EXCEL_COL_INDEX_NOPREF_2
+    ]
 
     SCORE_PREF_1 = 3
     SCORE_PREF_2 = 2
@@ -94,3 +101,13 @@ class Person:
                 total_score += score_per_preference_dict[id_preference_type]
         
         return total_score
+
+    def get_name_from_person_id(self, person_id: Optional[int] = None) -> str:
+        """
+        :param person_id:
+        :return:
+        """
+        if person_id in list(range(0, len(self.persons))):
+            return self.persons[person_id][self.INDEX_NAME]
+        else:
+            return '-'
