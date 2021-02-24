@@ -5,7 +5,7 @@ services:
     image: aimvector/python:1.0.0
     build:
       context: ./app
-      target: debug
+      target: prod
     environment:
       FLASK_DEBUG: 1
       FLASK_APP: ./app/main.py
