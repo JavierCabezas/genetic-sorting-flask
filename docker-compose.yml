@@ -1,14 +1,11 @@
-version: "3.4"
 services:
   genetic_flask:
     container_name: genetic
-    image: aimvector/python:1.0.0
     build:
       context: ./app
       target: prod
     environment:
       FLASK_DEBUG: 1
-      FLASK_APP: ./app/main.py
     volumes:
     - ./app/:/work
     ports:
