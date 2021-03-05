@@ -2,12 +2,12 @@ services:
   genetic_flask:
     container_name: genetic
     build:
-      context: ./app
+      context: ./
       target: prod
     environment:
       FLASK_DEBUG: 1
     volumes:
-    - ./app/:/work
+    - ./:/work
     ports:
       - 5000:5000
       - 5678:5678
