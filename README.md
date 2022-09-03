@@ -40,13 +40,25 @@ The logic behind the standard deviation is that, even if the score is the same, 
 having groups with a great dispersion of scores. (So teams with similar scores are prefered)
 4) This is looped N times.
 
+## How to run ##
+Since this project is docker-based its trivial to run.
+
+1) Build the project with docker-compose build
+2) Run docker-compose up
+
+
+## How to run the tests ##
+
+1) When building the docker project make sure that the target on the docker-compose is debug (instead of prod)
+2) Run docker-compose up
+3) Run bash run_tests.sh
+
 
 ## TO-DOs: ##
 
 * Create a configuration file for params (such as score)
-* Upload to heroku
-* Implement the tests (they are a WIP)
-* Improve the code legibility and comments
-* Translate everything to english (there is some spanish somewhere)
+* Make person and genetic independent, they are way too coupled
+* Try to remove some static methods
+* Upload to aws
 * (and the most important one) Make the software more flexible, so it can read n preferences and de-preferences from the Excel file.
-* MyPy
+* MyPy?

@@ -88,6 +88,33 @@ class Person:
         else:
             return self.ERROR_PERSON_NOT_FOUND
 
+    def get_pref_score(self, prefNumber :int) -> int:
+        """
+        Returns the score of a specific preference value. A preference value is the value that the students select in the excel file (first preference, second preference, first depreference, 
+        second depreference, etc...). So if the system has 3 preference values:
+    
+        +---------------+-------+
+        |  Preference   | Value |
+        +---------------+-------+
+        | First         |     1 |
+        | Second        |     2 |
+        | Third         |     3 |
+        | First depref  |    -1 |
+        | Second depref |    -2 |
+        | Third depref  |    -3 |
+        +---------------+-------+
+        :prefNumber:
+        """
+        if prefNumber == 1:
+            return self.SCORE_PREF_1
+        elif prefNumber == 2:
+            return self.SCORE_PREF_2
+        if prefNumber == -1:
+            return self.SCORE_DEPREF_1
+        elif prefNumber == -2:
+            return self.SCORE_DEPREF_2
+        raise ValueError('Not a valid preference number')
+
     @staticmethod
     def get_score_from_person_perspective(
         target_person_ids: List,
