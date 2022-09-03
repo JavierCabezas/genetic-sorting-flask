@@ -3,7 +3,8 @@ services:
     container_name: genetic
     build:
       context: ./
-      target: prod
+#      target: prod
+      target: debug
     environment:
       FLASK_DEBUG: 1
     volumes:
