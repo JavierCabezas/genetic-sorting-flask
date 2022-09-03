@@ -6,7 +6,7 @@ from .person import Person
 
 
 class Genetic:
-    NUMBER_OF_LOOPS = 5000
+    NUMBER_OF_LOOPS = 10000
 
     persons_per_group: int
     person_class: Person
