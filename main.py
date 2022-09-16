@@ -45,7 +45,7 @@ def process_file():
     first_index = next(iter(data))
     matrix = data[first_index][1:]
     person_class = Person(matrix)
-    genetic_class = Genetic(person_class, 3)
+    genetic_class = Genetic(person_class, int(request.form['persons_per_group']))
     genetic_class.calculate()
     groups = genetic_class.legible_groups(genetic_class.groups)
 
