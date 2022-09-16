@@ -71,6 +71,24 @@ class Genetic:
         """
         return [ids[i:i + self.persons_per_group] for i in range(0, len(ids), self.persons_per_group)]
 
+    def legible_groups(self, groups: List) -> List:
+        out = []
+        for student_id_list_in_group in self.get_sub_groups(groups):
+            #student_id_list_in_group is a list of students ids that are in the resulting group (Ex: [2, 4, 10] for a group for the 3 students with those ids)
+            to_add = {
+                'rows': [],
+                'group_score' : self.get_groups_score([student_id_list_in_group], self.person_class)
+            }
+            for student_id in student_id_list_in_group:
+                preferences = self.person_class.persons[student_id][self.person_class.INDEX_PREFERENCES]
+                to_add['rows'].append({
+                    'name': self.person_class.get_name_from_person_id(student_id),
+                    'score': self.person_class.get_score_from_person_perspective(student_id_list_in_group, preferences, self.person_class.score_cache_dict)
+                }),
+            out.append(to_add)
+
+        return out
+
     def number_of_sub_groups(self) -> int:
         """
         :return: int
