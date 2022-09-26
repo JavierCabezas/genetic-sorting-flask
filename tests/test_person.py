@@ -36,3 +36,17 @@ def test_get_score_from_person_perspective():
     neutral_scores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19]
     score = person_class.get_score_from_person_perspective(neutral_scores, preferences, pref_dict)
     assert 0 == score
+
+def test_get_pref_score():
+    person_class = common.get_initialized_person(number_of_prefs=2)
+    assert person_class.get_pref_score(2)  == 4
+    assert person_class.get_pref_score(1)  == 2
+    assert person_class.get_pref_score(-2)  == -4
+    assert person_class.get_pref_score(-1)  == -2
+
+    person_class = common.get_initialized_person(number_of_prefs=4)
+    assert person_class.get_pref_score(2)  == 4
+    assert person_class.get_pref_score(1)  == 2
+    assert person_class.get_pref_score(-2)  == -8
+    assert person_class.get_pref_score(-1)  == -4
+

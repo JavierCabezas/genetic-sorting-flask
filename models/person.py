@@ -30,10 +30,11 @@ class Person:
     person_cache_dict_name_index: Dict
     score_cache_dict: Dict
 
-    def __init__(self, matrix: List):
+    def __init__(self, matrix: List, number_of_preferences:int = 2):
         self.fill_persons_from_matrix(matrix)
         self.fill_preferences(matrix)
         self.fill_score_cache_dict()
+        self.number_of_preferences = number_of_preferences
 
     def fill_score_cache_dict(self):
         self.score_cache_dict = {
@@ -103,17 +104,19 @@ class Person:
         | Second depref |    -2 |
         | Third depref  |    -3 |
         +---------------+-------+
+
+        And the output score will be calculated by doing:
+            For positive scores: 2 times the preference amount
+            For negative scores: -3 times the preference score
+            (So we punish more teams with de-preferences)
         :prefNumber:
         """
-        if prefNumber == 1:
-            return self.SCORE_PREF_1
-        elif prefNumber == 2:
-            return self.SCORE_PREF_2
-        if prefNumber == -1:
-            return self.SCORE_DEPREF_1
-        elif prefNumber == -2:
-            return self.SCORE_DEPREF_2
-        raise ValueError('Not a valid preference number')
+        if prefNumber > 0:
+            return prefNumber * 2
+        elif prefNumber == 0:
+            return 0
+        else:
+            return self.number_of_preferences * prefNumber #Negative score since prefnumber is negative
 
     @staticmethod
     def get_score_from_person_perspective(

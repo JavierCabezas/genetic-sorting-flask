@@ -27,8 +27,7 @@ EXAMPLE_MATRIX_2PREF = [
 ]
 
 def get_initialized_person(number_of_prefs :int) -> Person:
-    if number_of_prefs == 2:
-        return Person(EXAMPLE_MATRIX_2PREF)
+    return Person(EXAMPLE_MATRIX_2PREF, number_of_preferences=number_of_prefs) #fix this, is not working for prefs != 2
 
 def get_score_per_preferece_dict(number_of_prefs :int) -> dict:
 	"""
