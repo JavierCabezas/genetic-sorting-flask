@@ -27,19 +27,19 @@ class Genetic:
         person_indexes = list(self.person_class.person_cache_dict_name_index.values())
         population_size = len(person_indexes)
         self.groups = person_indexes
-        self.current_score = Genetic.get_groups_score(self.get_sub_groups(self.groups), self.person_class)
-        self.current_std = Genetic.get_sub_group_std(self.get_sub_groups(self.groups), self.person_class)
+        self.current_score = self.get_groups_score(self.get_sub_groups(self.groups))
+        self.current_std = self.get_sub_group_std(self.get_sub_groups(self.groups))
         self.switches = 0
         for _ in range(self.NUMBER_OF_LOOPS):
             candidate_group = self.create_group_by_crossing_over(population_size)
-            candidate_score = Genetic.get_groups_score(self.get_sub_groups(candidate_group), self.person_class)
+            candidate_score = self.get_groups_score(self.get_sub_groups(candidate_group))
             # If the score is better, switch.
             # If the score is the same but the std is lower, switch.
             # Otherwise, keep current solution
             if candidate_score > self.current_score:
                 is_candidate_group_better = True
             elif candidate_score == self.current_score:
-                candidate_std = Genetic.get_sub_group_std(self.get_sub_groups(candidate_group), self.person_class)
+                candidate_std = self.get_sub_group_std(self.get_sub_groups(candidate_group))
                 if candidate_std < self.current_std:
                     is_candidate_group_better = True
                 else:
@@ -50,7 +50,7 @@ class Genetic:
             if is_candidate_group_better:
                 self.groups = candidate_group
                 self.current_score = candidate_score
-                self.current_std = Genetic.get_sub_group_std(self.get_sub_groups(self.groups), self.person_class)
+                self.current_std = self.get_sub_group_std(self.get_sub_groups(self.groups))
                 self.switches += 1
 
     def create_group_by_crossing_over(self, population_size: int) -> List:
@@ -77,13 +77,13 @@ class Genetic:
             #student_id_list_in_group is a list of students ids that are in the resulting group (Ex: [2, 4, 10] for a group for the 3 students with those ids)
             to_add = {
                 'rows': [],
-                'group_score' : self.get_groups_score([student_id_list_in_group], self.person_class)
+                'group_score' : self.get_groups_score([student_id_list_in_group])
             }
             for student_id in student_id_list_in_group:
                 preferences = self.person_class.persons[student_id][self.person_class.INDEX_PREFERENCES]
                 to_add['rows'].append({
                     'name': self.person_class.get_name_from_person_id(student_id),
-                    'score': self.person_class.get_score_from_person_perspective(student_id_list_in_group, preferences, self.person_class.score_cache_dict)
+                    'score': self.person_class.get_score_from_person_perspective(student_id_list_in_group, preferences)
                 }),
             out.append(to_add)
 
@@ -95,19 +95,16 @@ class Genetic:
         """
         return len(self.get_sub_groups(self.groups))
 
-    @staticmethod
-    def get_sub_group_std(separated_groups: List, person_class: Person):
+    def get_sub_group_std(self, separated_groups: List):
         """
         Gets the standard deviation of the scores of each of the sub-groups of the groups array
         :param separated_groups:
-        :param person_class:
         :return:
         """
-        scores = [Genetic.get_groups_score([group], person_class) for group in separated_groups]
+        scores = [self.get_groups_score([group]) for group in separated_groups]
         return statistics.stdev(scores)
 
-    @staticmethod
-    def get_groups_score(groups: List, person_class: Person) -> int:
+    def get_groups_score(self, groups: List) -> int:
         """
         Receives a list of sub-groups and returns the added up score of each of these sub-groups
         :param groups:
@@ -118,9 +115,8 @@ class Genetic:
         for group in groups:
             # The sub-group contains a group of person_ids
             for selected_person_id in group:
-                total_score += Person.get_score_from_person_perspective(
+                total_score += self.person_class.get_score_from_person_perspective(
                     target_person_ids=group,
-                    origin_person_preferences=person_class.persons[selected_person_id][Person.INDEX_PREFERENCES],
-                    score_per_preference_dict=person_class.score_cache_dict
+                    origin_person_preferences=self.person_class.persons[selected_person_id][self.person_class.INDEX_PREFERENCES],
                 )
         return total_score
