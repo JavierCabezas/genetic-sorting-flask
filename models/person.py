@@ -1,24 +1,9 @@
 from typing import List, Dict, Optional
+from .reader import Reader
 
 
 class Person:
     EXCEL_COL_INDEX_NAME: int = 1
-    EXCEL_COL_INDEX_PREF_1: int = 2
-    EXCEL_COL_INDEX_PREF_2: int = 3
-    EXCEL_COL_INDEX_NOPREF_1: int = 4
-    EXCEL_COL_INDEX_NOPREF_2: int = 5
-
-    INDEXES_PREFERENCES: List = [
-        EXCEL_COL_INDEX_PREF_1,
-        EXCEL_COL_INDEX_PREF_2,
-        EXCEL_COL_INDEX_NOPREF_1,
-        EXCEL_COL_INDEX_NOPREF_2
-    ]
-
-    SCORE_PREF_1 = 3
-    SCORE_PREF_2 = 2
-    SCORE_DEPREF_1 = -6
-    SCORE_DEPREF_2 = -4
 
     INDEX_NAME: str = 'name'
     INDEX_IDX_PERSON: str = 'idxPerson'
@@ -31,18 +16,9 @@ class Person:
     score_cache_dict: Dict
 
     def __init__(self, matrix: List, number_of_preferences:int = 2):
+        self.number_of_preferences = number_of_preferences
         self.fill_persons_from_matrix(matrix)
         self.fill_preferences(matrix)
-        self.fill_score_cache_dict()
-        self.number_of_preferences = number_of_preferences
-
-    def fill_score_cache_dict(self):
-        self.score_cache_dict = {
-            self.EXCEL_COL_INDEX_PREF_1: self.SCORE_PREF_1,
-            self.EXCEL_COL_INDEX_PREF_2: self.SCORE_PREF_2,
-            self.EXCEL_COL_INDEX_NOPREF_1: self.SCORE_DEPREF_1,
-            self.EXCEL_COL_INDEX_NOPREF_2: self.SCORE_DEPREF_2,
-        }
 
     def fill_persons_from_matrix(self, matrix: List):
         """
@@ -65,17 +41,7 @@ class Person:
         return len(self.persons)
 
     def fill_preferences(self, matrix :List):
-        """
-        :param matrix:
-        :return:
-        """
-        preferences_list = [
-            self.EXCEL_COL_INDEX_PREF_1,
-            self.EXCEL_COL_INDEX_PREF_2,
-            self.EXCEL_COL_INDEX_NOPREF_1,
-            self.EXCEL_COL_INDEX_NOPREF_2
-        ]
-
+        preferences_list = [pref_column for pref_column in range(2, 2*(self.number_of_preferences+1))]
         for index, person in enumerate(self.persons):
             for preference_index in preferences_list:
                 person_name_for_preference = matrix[index][preference_index]
@@ -89,7 +55,7 @@ class Person:
         else:
             return self.ERROR_PERSON_NOT_FOUND
 
-    def get_pref_score(self, prefNumber :int) -> int:
+    def get_pref_score(self, preference_number :int) -> int:
         """
         Returns the score of a specific preference value. A preference value is the value that the students select in the excel file (first preference, second preference, first depreference, 
         second depreference, etc...). So if the system has 3 preference values:
@@ -107,28 +73,25 @@ class Person:
 
         And the output score will be calculated by doing:
             For positive scores: 2 times the preference amount
-            For negative scores: -3 times the preference score
+            For negative scores: -3 times how un-preferable (-1 being the most un-preferable) the match is
             (So we punish more teams with de-preferences)
         :prefNumber:
         """
-        if prefNumber > 0:
-            return prefNumber * 2
-        elif prefNumber == 0:
+        if preference_number > 0:
+            return preference_number * 2
+        elif preference_number == 0:
             return 0
         else:
-            return self.number_of_preferences * prefNumber #Negative score since prefnumber is negative
+            return -3 * (self.number_of_preferences  - abs(preference_number) + 1)
 
-    @staticmethod
-    def get_score_from_person_perspective(
-        target_person_ids: List,
-        origin_person_preferences: Dict,
-        score_per_preference_dict: Dict
-    ) -> int:
+    def get_score_from_person_perspective(self, target_person_ids: List, origin_person_preferences: Dict) -> int:
         total_score = 0
+        reader = Reader(number_of_preferences=self.number_of_preferences)
         for id_preference_type in origin_person_preferences.keys():
-            prefered_person_id = origin_person_preferences[id_preference_type]
-            if prefered_person_id in target_person_ids:
-                total_score += score_per_preference_dict[id_preference_type]
+            preferred_person_id = origin_person_preferences[id_preference_type]
+            if preferred_person_id in target_person_ids:
+                pref_number = reader.transform_column_to_preference(id_preference_type)
+                total_score += self.get_pref_score(pref_number)
         
         return total_score
 
