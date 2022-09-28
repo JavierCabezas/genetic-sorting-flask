@@ -26,6 +26,7 @@ EXAMPLE_MATRIX_2PREF = [
     [None, 'Humayra Hook', ' - ', ' - ', ' - ', ' - '],
     [None, 'Carlie Burrows', ' - ', ' - ', ' - ', ' - ']
 ]
+
 def generate_matrix_of_size(number_of_prefs :int) -> list:
     number_of_persons = randint(5, 55)
     matrix = []
