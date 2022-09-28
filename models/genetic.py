@@ -3,11 +3,9 @@ import statistics
 
 from typing import List, Dict
 from .person import Person
-
+from .config import Config
 
 class Genetic:
-    NUMBER_OF_LOOPS = 10000
-
     persons_per_group: int
     person_class: Person
 
@@ -26,11 +24,14 @@ class Genetic:
         """
         person_indexes = list(self.person_class.person_cache_dict_name_index.values())
         population_size = len(person_indexes)
+        config_model = Config()
+
         self.groups = person_indexes
         self.current_score = self.get_groups_score(self.get_sub_groups(self.groups))
         self.current_std = self.get_sub_group_std(self.get_sub_groups(self.groups))
         self.switches = 0
-        for _ in range(self.NUMBER_OF_LOOPS):
+        number_of_loops = config_model.get_config_value(path=['app', 'number_of_loops'])
+        for _ in range(number_of_loops):
             candidate_group = self.create_group_by_crossing_over(population_size)
             candidate_score = self.get_groups_score(self.get_sub_groups(candidate_group))
             # If the score is better, switch.
