@@ -63,4 +63,3 @@ def get_score_per_preferece_dict(number_of_prefs :int) -> dict:
     for i in range(number_of_prefs):
         out[i+2+number_of_prefs] = person_class.get_pref_score(-1*(i+1))
     return out
-

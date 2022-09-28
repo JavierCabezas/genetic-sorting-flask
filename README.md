@@ -58,7 +58,6 @@ Since this project is docker-based its trivial to run.
 
 * Create a configuration file for params (such as score)
 * Make person and genetic independent, they are way too coupled
-* Try to remove some static methods
 * Upload to aws
 * (and the most important one) Make the software more flexible, so it can read n preferences and de-preferences from the Excel file.
 * MyPy?
