@@ -4,17 +4,6 @@ from .reader import Reader
 
 class Person:
     EXCEL_COL_INDEX_NAME: int = 1
-    EXCEL_COL_INDEX_PREF_1: int = 2
-    EXCEL_COL_INDEX_PREF_2: int = 3
-    EXCEL_COL_INDEX_NOPREF_1: int = 4
-    EXCEL_COL_INDEX_NOPREF_2: int = 5
-
-    INDEXES_PREFERENCES: List = [
-        EXCEL_COL_INDEX_PREF_1,
-        EXCEL_COL_INDEX_PREF_2,
-        EXCEL_COL_INDEX_NOPREF_1,
-        EXCEL_COL_INDEX_NOPREF_2
-    ]
 
     INDEX_NAME: str = 'name'
     INDEX_IDX_PERSON: str = 'idxPerson'
@@ -27,9 +16,9 @@ class Person:
     score_cache_dict: Dict
 
     def __init__(self, matrix: List, number_of_preferences:int = 2):
+        self.number_of_preferences = number_of_preferences
         self.fill_persons_from_matrix(matrix)
         self.fill_preferences(matrix)
-        self.number_of_preferences = number_of_preferences
 
     def fill_persons_from_matrix(self, matrix: List):
         """
@@ -52,17 +41,7 @@ class Person:
         return len(self.persons)
 
     def fill_preferences(self, matrix :List):
-        """
-        :param matrix:
-        :return:
-        """
-        preferences_list = [
-            self.EXCEL_COL_INDEX_PREF_1,
-            self.EXCEL_COL_INDEX_PREF_2,
-            self.EXCEL_COL_INDEX_NOPREF_1,
-            self.EXCEL_COL_INDEX_NOPREF_2
-        ]
-
+        preferences_list = [pref_column for pref_column in range(2, 2*(self.number_of_preferences+1))]
         for index, person in enumerate(self.persons):
             for preference_index in preferences_list:
                 person_name_for_preference = matrix[index][preference_index]
@@ -107,10 +86,11 @@ class Person:
 
     def get_score_from_person_perspective(self, target_person_ids: List, origin_person_preferences: Dict) -> int:
         total_score = 0
+        reader = Reader(number_of_preferences=self.number_of_preferences)
         for id_preference_type in origin_person_preferences.keys():
             preferred_person_id = origin_person_preferences[id_preference_type]
             if preferred_person_id in target_person_ids:
-                pref_number = Reader.transform_column_to_preference(id_preference_type, self.number_of_preferences)
+                pref_number = reader.transform_column_to_preference(id_preference_type)
                 total_score += self.get_pref_score(pref_number)
         
         return total_score

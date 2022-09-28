@@ -1,14 +1,13 @@
 class Reader:
 
-    def __init__(self):
-        pass
+    def __init__(self, number_of_preferences :int):
+        self.number_of_preferences = number_of_preferences
 
-    @staticmethod
-    def transform_column_to_preference(column_number: int, number_of_preferences :int) -> int:
+    def transform_column_to_preference(self, column_number: int) -> int:
         """
         Gets the column number in the file and returns the preference value associated to it
         Ex: If there are two preferences then the columns 2 and 3 are going to be the first two preferences and
-            columns 4 and 5 are going to be the first de-pref and second depref. So:
+            columns 4 and 5 are going to be the first de-pref and second de-pref. So:
 
         +---------------+------------+
         |  Column num   | Return val |
@@ -24,8 +23,8 @@ class Reader:
         :return:
         """
 
-        is_negative_pref = column_number - 1 > number_of_preferences
+        is_negative_pref = column_number - 1 > self.number_of_preferences
         if is_negative_pref:
-            return -1 * (column_number - 1 - number_of_preferences)
+            return -1 * (column_number - 1 - self.number_of_preferences)
         else:
             return column_number - 1
