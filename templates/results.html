@@ -19,11 +19,13 @@
             <thead>
             <tr>
                 <th>#</th>
-                <th>Nombre</th>
-                <th>Primera preferencia</th>
-                <th>Segunda preferencia</th>
-                <th>Primera de-preferencia</th>
-                <th>Segunda de-preferencia</th>
+                <th>Name</th>
+                {% for pref_number in range(genetic_class.persons_per_group, 1, -1) %}
+                    <th> {{ (pref_number-1) * '👍'}}</th>
+                {% endfor %}
+                {% for depref_number in range(genetic_class.persons_per_group, 1, -1) %}
+                    <th> {{ (depref_number-1) * '👎'}}</th>
+                {% endfor %}            
             </tr>
             </thead>
             <tbody>
@@ -33,8 +35,8 @@
                 <tr>
                     <td> {{ idx }}</td>
                     <td> {{ person[person_class.INDEX_NAME] }} </td>
-                    {% for preference_idx in person_class.INDEXES_PREFERENCES %}
-                        {% set prefered_person_id = person[pref_key][preference_idx] %}
+                    {% for preference_row in range(genetic_class.persons_per_group-1, 2*genetic_class.persons_per_group) %}
+                        {% set prefered_person_id = person[pref_key][preference_row] %}
                         <td> {{ person_class.get_name_from_person_id(prefered_person_id) }} </td>
                     {% endfor %}
                 </tr>
