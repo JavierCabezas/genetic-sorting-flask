@@ -6,7 +6,9 @@ from typing import Dict, List
 class Config:
     DEFAULT_VALUES = {
         "app": {
-            "number_of_loops": 10000
+            "number_of_loops": 10000,
+            "default_persons_per_group": 3,
+            "default_preference_columns": 2
         }
     }
 

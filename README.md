@@ -57,8 +57,7 @@ Since this project is docker-based its trivial to run.
 ## TO-DOs: ##
 
 * Make create a way in how config files can be updated in case newly created configuration variables are created (right now you must delete the old config)
+* Make a way to download sample excel files with the new preference rows parameter
 * Make person and genetic independent, they are way too coupled
 * Upload to aws
-* (and the most important one) Make the software more flexible, so it can read n preferences and de-preferences from the Excel file.
 * MyPy?
-* Separete person from FileHandler classes

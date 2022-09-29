@@ -13,6 +13,7 @@ from functools import wraps
 from models.person import Person
 from models.genetic import Genetic
 from models.fileHandler import FileHandler
+from models.config import Config
 
 app = Flask(__name__)
 
@@ -28,7 +29,12 @@ def redirect_to_home_if_get(f):
 
 @app.route("/")
 def home():
-    return render_template("index.html", default_persons_per_group=3)
+    config_model = Config()
+    return render_template(
+        "index.html",
+        default_persons_per_group=config_model.get_config_value(['app', 'default_persons_per_group']),
+        default_preference_columns=config_model.get_config_value(['app', 'default_preference_columns']),
+    )
 
 
 @app.route('/reader', methods=['POST', 'GET'])
@@ -36,17 +42,17 @@ def home():
 def process_file():
     file = request.files['file_to_upload']
     matrix = FileHandler.get_matrix_from_excel(file)
-    person_class = Person(matrix)
+    person_class = Person(matrix=matrix, number_of_preferences=int(request.form['number_of_preferences']))
     genetic_class = Genetic(person_class, int(request.form['persons_per_group']))
     genetic_class.calculate()
     groups = genetic_class.legible_groups(genetic_class.groups)
 
     return render_template(
         "results.html",
+        parsed_groups=urllib.parse.quote(json.dumps(groups)),
         genetic_class=genetic_class,
         person_class=genetic_class.person_class,
-        groups=groups,
-        parsed_groups=urllib.parse.quote(json.dumps(groups))
+        groups=groups
     )
 
 
