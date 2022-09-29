@@ -61,4 +61,4 @@ Since this project is docker-based its trivial to run.
 * Upload to aws
 * (and the most important one) Make the software more flexible, so it can read n preferences and de-preferences from the Excel file.
 * MyPy?
-* Separete person from reader classes
+* Separete person from FileHandler classes
