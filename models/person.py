@@ -1,5 +1,5 @@
 from typing import List, Dict, Optional
-from .reader import Reader
+from .fileHandler import FileHandler
 
 
 class Person:
@@ -86,7 +86,7 @@ class Person:
 
     def get_score_from_person_perspective(self, target_person_ids: List, origin_person_preferences: Dict) -> int:
         total_score = 0
-        reader = Reader(number_of_preferences=self.number_of_preferences)
+        reader = FileHandler(number_of_preferences=self.number_of_preferences)
         for id_preference_type in origin_person_preferences.keys():
             preferred_person_id = origin_person_preferences[id_preference_type]
             if preferred_person_id in target_person_ids:
