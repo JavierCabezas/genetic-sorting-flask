@@ -1,4 +1,4 @@
-from models.person import Person
+from models.matrix import Matrix
 from random import randint
 
 EXAMPLE_MATRIX_2PREF = [
@@ -45,9 +45,9 @@ def generate_matrix_of_size(number_of_prefs :int) -> list:
 
     return matrix
 
-def get_initialized_person(number_of_prefs :int) -> Person:
+def get_initialized_matrix(number_of_prefs :int) -> Matrix:
     matrix = EXAMPLE_MATRIX_2PREF if number_of_prefs == 2 else generate_matrix_of_size(number_of_prefs=number_of_prefs)
-    return Person(matrix, number_of_preferences=number_of_prefs)
+    return Matrix(matrix, number_of_preferences=number_of_prefs)
 
 def get_score_per_preferece_dict(number_of_prefs :int) -> dict:
     """
@@ -57,7 +57,7 @@ def get_score_per_preferece_dict(number_of_prefs :int) -> dict:
     }
     It starts counting from 1 (and, since the first column of the excel is unused, the first preference value has an index of 2)
     """
-    person_class = get_initialized_person(number_of_prefs)
+    person_class = get_initialized_matrix(number_of_prefs)
     out = {}
     for i in range(number_of_prefs):
         out[i+2] = person_class.get_pref_score(i+1)

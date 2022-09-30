@@ -10,7 +10,7 @@ import json
 
 from functools import wraps
 
-from models.person import Person
+from models.matrix import Matrix
 from models.genetic import Genetic
 from models.fileHandler import FileHandler
 
@@ -36,15 +36,15 @@ def home():
 def process_file():
     file = request.files['file_to_upload']
     matrix = FileHandler.get_matrix_from_excel(file)
-    person_class = Person(matrix)
-    genetic_class = Genetic(person_class, int(request.form['persons_per_group']))
+    matrix_class = Matrix(matrix)
+    genetic_class = Genetic(matrix_class.individuals, int(request.form['persons_per_group']))
     genetic_class.calculate()
     groups = genetic_class.legible_groups(genetic_class.groups)
 
     return render_template(
         "results.html",
         genetic_class=genetic_class,
-        person_class=genetic_class.person_class,
+        matrix_class=genetic_class.matrix_class,
         groups=groups,
         parsed_groups=urllib.parse.quote(json.dumps(groups))
     )

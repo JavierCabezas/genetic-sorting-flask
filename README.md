@@ -53,6 +53,9 @@ Since this project is docker-based its trivial to run.
 2) Run docker-compose up
 3) Run bash run_tests.sh
 
+## Known issues so far ##
+1) If two or more in the excel have exactly the same name the system will get confused and return inconsistent data.
+2) There is absolutely no validation for the uploaded excel file.
 
 ## TO-DOs: ##
 
