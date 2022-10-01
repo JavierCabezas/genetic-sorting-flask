@@ -4,12 +4,13 @@ import random
 from typing import List
 from .matrix import Matrix
 from .config import Config
+from .group import Group
 
 class Genetic:
     persons_per_group: int
     matrix_class: Matrix
 
-    groups: List  # Selected groups.
+    groupGroup: GroupGroup  # Selected groups.
     current_score: int  # Score of the selected group
     switches: int  # Number of times that the group was changed (just for stats)
     current_std: float  # Standard deviation of all the scores of all the sub-groups of the current solution
@@ -17,25 +18,27 @@ class Genetic:
     #TODO: Hint that persons should be a list of persons
     def __init__(self, persons :List, persons_per_group: int):
         self.persons_per_group = persons_per_group
-        self.groups = self.get_initial_groups(persons)
-        #TODO: Initialize the current score and std with the values of the initial group generated
-        self.current_score = self.get_solution_score()
-        self.current_std = self.get_solution_std()
+        self.groupGroup = self.get_initial_group_groups(persons)
 
-    def get_initial_groups(self, persons :List):
+    def get_initial_group_groups(self, persons :List):
         """
         Generates the initial groups. 
         Ex: If group size = 3 and Persons = [P1, P2, P3, P4, P5, P6, P7, P8] it generates the groups
-        Group 2 = [1,2,3], Group 2 = [4,5,6], Group 3=[7,8]
+        Group 2 = [1,2,3], Group 2 = [4,5,6], Group 3 = [7,8]
         """
-        groups_to_return = []
+        group_group_to_return = GroupGroup()
         groups_to_add = [persons[i:i + self.persons_per_group] for i in range(0, len(persons), self.persons_per_group)]
         for group_to_add in groups_to_add:
             new_group = Group()
             for individual in group_to_add:
                 new_group.add_member(individual=individual)
-            groups_to_return.append(new_group)
-        return groups_to_return
+            group_group_to_return.add_member(new_group)
+        return group_group_to_return
+
+
+
+
+
 
     def calculate(self):
         """
@@ -70,18 +73,6 @@ class Genetic:
                 self.current_std = self.get_sub_group_std(self.get_sub_groups(self.groups))
                 self.switches += 1
 
-
-
-
-
-
-
-
-
-
-
-
-
     def create_group_by_crossing_over(self, population_size: int) -> List:
         number_of_flips = random.randint(1, population_size)
         out = self.groups.copy()
@@ -91,44 +82,18 @@ class Genetic:
             out[origin_person_idx], out[target_person_idx] = out[target_person_idx], out[origin_person_idx]
         return out
 
-    def legible_groups(self, groups: List) -> List:
+    def legible_groups(self) -> List:
         out = []
-        for student_id_list_in_group in self.get_sub_groups(groups):
-            #student_id_list_in_group is a list of students ids that are in the resulting group (Ex: [2, 4, 10] for a group for the 3 students with those ids)
+        for group in self.groupGroup.members:
             to_add = {
                 'rows': [],
-                'group_score' : self.get_groups_score([student_id_list_in_group])
+                'group_score' : group.score
             }
-            for student_id in student_id_list_in_group:
-                preferences = self.matrix_class.persons[student_id][self.matrix_class.INDEX_PREFERENCES]
+            for individualWithScore in group.members:
                 to_add['rows'].append({
-                    'name': self.matrix_class.get_name_from_person_id(student_id),
-                    'score': self.matrix_class.get_score_from_person_perspective(student_id_list_in_group, preferences)
+                    'name': str(individualWithScore['individual']),
+                    'score': individualWithScore['score']
                 }),
             out.append(to_add)
 
         return out
-
-    def number_of_sub_groups(self) -> int:
-        """
-        :return: int
-        """
-        return len(self.get_sub_groups(self.groups))
-
-
-    def get_groups_score(self, groups: List) -> int:
-        """
-        Receives a list of sub-groups and returns the added up score of each of these sub-groups
-        :param groups:
-        :param matrix_class:
-        :return:
-        """
-        total_score = 0
-        for group in groups:
-            # The sub-group contains a group of person_ids
-            for selected_person_id in group:
-                total_score += self.matrix_class.get_score_from_person_perspective(
-                    target_person_ids=group,
-                    origin_person_preferences=self.matrix_class.persons[selected_person_id][self.matrix_class.INDEX_PREFERENCES],
-                )
-        return total_score

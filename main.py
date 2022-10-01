@@ -38,15 +38,20 @@ def process_file():
     matrix = FileHandler.get_matrix_from_excel(file)
     matrix_class = Matrix(matrix)
     genetic_class = Genetic(matrix_class.individuals, int(request.form['persons_per_group']))
-    genetic_class.calculate()
-    groups = genetic_class.legible_groups(genetic_class.groups)
+    #genetic_class.calculate()
+    groups = genetic_class.legible_groups()
 
     return render_template(
         "results.html",
-        genetic_class=genetic_class,
-        matrix_class=genetic_class.matrix_class,
         groups=groups,
-        parsed_groups=urllib.parse.quote(json.dumps(groups))
+        parsed_groups=urllib.parse.quote(json.dumps(groups)),
+        solution_score=genetic_class.groupGroup.get_score(),
+        input={
+            'persons_per_group': genetic_class.persons_per_group,
+            'number_of_persons': genetic_class.groupGroup.get_number_of_individuals(),
+            'number_of_sub_groups': len(genetic_class.groupGroup.members),
+            'individuals': genetic_class.groupGroup.get_all_individuals()
+        }
     )
 
 

@@ -57,11 +57,16 @@ Since this project is docker-based its trivial to run.
 1) If two or more in the excel have exactly the same name the system will get confused and return inconsistent data.
 2) There is absolutely no validation for the uploaded excel file.
 
-## TO-DOs: ##
+## TO-DOs: ## 
 
+### Features ### 
 * Make create a way in how config files can be updated in case newly created configuration variables are created (right now you must delete the old config)
-* Make person and genetic independent, they are way too coupled
+* Update all the tests with the new model
 * Upload to aws
 * (and the most important one) Make the software more flexible, so it can read n preferences and de-preferences from the Excel file.
 * MyPy?
 * Separete person from FileHandler classes
+
+### Improvements ###
+* Can we merge somehow the classes groupGroup and Group? I should think in how to avoid repeating code
+* Is there a way in how to avoid using a dict (ew) in group.py?

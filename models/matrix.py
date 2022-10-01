@@ -23,8 +23,9 @@ class Matrix:
             ## Preferences
             for column_index in range(2, 2+2*self.number_of_preferences):
                 target_person_name = row[column_index]
-                target_person_score = self.get_pref_score(self.matrix_column_to_pref_score(column_index))
-                individual.add_preference(name=target_person_name, score=target_person_score)
+                pref_score = self.matrix_column_to_pref_score(column_index)                
+                target_person_score = self.get_pref_score(pref_score)
+                individual.add_preference(name=target_person_name, score=target_person_score, preference=pref_score)
             individuals.append(individual)
         return individuals
 
