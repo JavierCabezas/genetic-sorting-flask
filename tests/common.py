@@ -1,4 +1,9 @@
+from typing import Dict, Optional, List
+from models.group import Group
 from models.matrix import Matrix
+from models.individual import Individual
+from models.preference import Preference
+
 from random import randint
 
 EXAMPLE_MATRIX_2PREF = [
@@ -64,3 +69,15 @@ def get_score_per_preferece_dict(number_of_prefs :int) -> dict:
     for i in range(number_of_prefs):
         out[i+2+number_of_prefs] = person_class.get_pref_score(-1*(i+1))
     return out
+
+def create_individual(name:str = 'Individual', *preferences: Dict) -> Individual:
+    individual = Individual(name=name)
+    for preference in preferences:
+        individual.add_preference(name=preference['name'], score=preference['score'], preference=preference['preference'])
+    return individual
+
+def create_group(*individuals: Individual):
+    group = Group()
+    for individual in individuals:
+        group.add_member(individual=individual)
+    return group

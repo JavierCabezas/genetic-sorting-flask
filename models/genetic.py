@@ -1,10 +1,11 @@
-from .groupGroup import GroupGroup
-import random
-
-from typing import List
 from .matrix import Matrix
 from .config import Config
 from .group import Group
+from .groupGroup import GroupGroup
+
+from typing import List
+from copy import deepcopy
+
 
 class Genetic:
     persons_per_group: int
@@ -36,30 +37,26 @@ class Genetic:
         return group_group_to_return
 
 
-
-
-
-
     def calculate(self):
         """
         Returns the best possible group found within the number of loops configured
         """
         config_model = Config()
 
-        self.current_score = self.get_groups_score(self.get_sub_groups(self.groups))
-        self.current_std = self.get_sub_group_std(self.get_sub_groups(self.groups))
         self.switches = 0
+        if len(self.groupGroup.members) < 2:
+            pass #Can't optimize if there are less than two groups
+
         number_of_loops = config_model.get_config_value(path=['app', 'number_of_loops'])
         for _ in range(number_of_loops):
-            candidate_group = self.create_group_by_crossing_over(population_size)
-            candidate_score = self.get_groups_score(self.get_sub_groups(candidate_group))
+            candidate_group_group = self.create_group_group_by_crossing_over()
             # If the score is better, switch.
             # If the score is the same but the std is lower, switch.
             # Otherwise, keep current solution
-            if candidate_score > self.current_score:
+            if candidate_group_group.get_score(get_cached_value=True) > self.current_score:
                 is_candidate_group_better = True
-            elif candidate_score == self.current_score:
-                candidate_std = self.get_sub_group_std(self.get_sub_groups(candidate_group))
+            elif candidate_group_group.get_score(get_cached_value=True) == self.current_score:
+                candidate_std = candidate_group_group.get_std(get_cached_value=True)
                 if candidate_std < self.current_std:
                     is_candidate_group_better = True
                 else:
@@ -68,19 +65,15 @@ class Genetic:
                 is_candidate_group_better = False
 
             if is_candidate_group_better:
-                self.groups = candidate_group
-                self.current_score = candidate_score
-                self.current_std = self.get_sub_group_std(self.get_sub_groups(self.groups))
+                self.groupGroup = candidate_group_group
+                self.current_score = candidate_group_group.get_score(get_cached_value=True) 
+                self.current_std = candidate_group_group.get_std(get_cached_value=True)
                 self.switches += 1
 
-    def create_group_by_crossing_over(self, population_size: int) -> List:
-        number_of_flips = random.randint(1, population_size)
-        out = self.groups.copy()
-        for _ in range(number_of_flips):
-            origin_person_idx = random.randint(0, population_size - 1)
-            target_person_idx = random.randint(0, population_size - 1)
-            out[origin_person_idx], out[target_person_idx] = out[target_person_idx], out[origin_person_idx]
-        return out
+    def create_group_group_by_crossing_over(self) -> GroupGroup:
+        copied_group_group : GroupGroup = deepcopy(self.groupGroup())
+        copied_group_group.flip_between_groups()
+        return copied_group_group
 
     def legible_groups(self) -> List:
         out = []

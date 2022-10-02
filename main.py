@@ -16,7 +16,6 @@ from models.fileHandler import FileHandler
 
 app = Flask(__name__)
 
-
 def redirect_to_home_if_get(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -38,7 +37,7 @@ def process_file():
     matrix = FileHandler.get_matrix_from_excel(file)
     matrix_class = Matrix(matrix)
     genetic_class = Genetic(matrix_class.individuals, int(request.form['persons_per_group']))
-    #genetic_class.calculate()
+    genetic_class.calculate()
     groups = genetic_class.legible_groups()
 
     return render_template(

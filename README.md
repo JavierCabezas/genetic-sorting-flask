@@ -61,6 +61,7 @@ Since this project is docker-based its trivial to run.
 
 ### Features ### 
 * Make create a way in how config files can be updated in case newly created configuration variables are created (right now you must delete the old config)
+* Comment all of the models
 * Update all the tests with the new model
 * Upload to aws
 * (and the most important one) Make the software more flexible, so it can read n preferences and de-preferences from the Excel file.
