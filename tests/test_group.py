@@ -1,51 +1,5 @@
 from models import individual
-from tests.common import create_individual, create_group
-
-def get_individual(name_of_individual: str):
-    #For some reason I decided to invent a rivarly between the pika line and the nido line, I dunno.
-    if name_of_individual == 'nidoking':
-        return create_individual('nidoking',
-            {'name':'nidoqueen', 'score':10, 'preference': 1},
-            {'name':'nidoran', 'score':4, 'preference' : 2},
-            {'name':'pikachu', 'score':-6, 'preference' : -1},
-            {'name':'raichu', 'score':-3, 'preference': -2}
-        )
-    if name_of_individual == 'nidoqueen':
-        return create_individual('nidoqueen',
-            {'name':'nidoran', 'score':8, 'preference': 1},
-            {'name':'nidoking', 'score':6, 'preference': 2},
-            ##Intentionally this preference is left blank
-            {'name':'pichu', 'score':-3, 'preference' : -2},
-        )
-    if name_of_individual == 'nidoran':
-        return create_individual('nidoran', 
-            {'name':'nidoking', 'score':6, 'preference': 1},
-            {'name':'nidoqueen', 'score':4, 'preference': 2},
-            ##Intentionally this preference is left blank
-            ##Intentionally this preference is left blank
-        )
-    if name_of_individual == 'raichu':
-        return create_individual('raichu',
-            {'name':'pikachu', 'score':6, 'preference': 1},
-            {'name':'pichu', 'score':4, 'preference': 2},
-            {'name':'nidoking', 'score':-6, 'preference': -1},
-            ##Intentionally this preference is left blank
-        )
-    if name_of_individual == 'pichu':
-        return create_individual('pichu',
-            {'name':'pikachu', 'score':6, 'preference': 1},
-            {'name':'raichu', 'score':4, 'preference': 2},
-            {'name':'nidoking', 'score':-6, 'preference': -1},
-            {'name':'nidorino', 'score':-4, 'preference': -2},
-        )
-    if name_of_individual == 'pikachu':
-        return create_individual('pikachu',
-            {'name':'pichu', 'score':6, 'preference': 1},
-            {'name':'raichu', 'score':4, 'preference': 2},
-            ##Intentionally this preference is left blank
-            ##Intentionally this preference is left blank
-        )
-
+from tests.common import get_individual, create_group
 
 def test_basics():
     nidoking = get_individual('nidoking')

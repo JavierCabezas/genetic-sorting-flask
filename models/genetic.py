@@ -2,9 +2,9 @@ from .matrix import Matrix
 from .config import Config
 from .group import Group
 from .groupGroup import GroupGroup
+from .individual import Individual
 
 from typing import List
-from copy import deepcopy
 
 
 class Genetic:
@@ -16,12 +16,11 @@ class Genetic:
     switches: int  # Number of times that the group was changed (just for stats)
     current_std: float  # Standard deviation of all the scores of all the sub-groups of the current solution
 
-    #TODO: Hint that persons should be a list of persons
-    def __init__(self, persons :List, persons_per_group: int):
+    def __init__(self, individuals :List[Individual], persons_per_group: int):
         self.persons_per_group = persons_per_group
-        self.groupGroup = self.get_initial_group_groups(persons)
+        self.groupGroup = self.get_initial_group_groups(individuals)
 
-    def get_initial_group_groups(self, persons :List):
+    def get_initial_group_groups(self, persons :List[Individual]):
         """
         Generates the initial groups. 
         Ex: If group size = 3 and Persons = [P1, P2, P3, P4, P5, P6, P7, P8] it generates the groups
@@ -70,10 +69,6 @@ class Genetic:
                 self.current_std = candidate_group_group.get_std(get_cached_value=True)
                 self.switches += 1
 
-    def create_group_group_by_crossing_over(self) -> GroupGroup:
-        copied_group_group : GroupGroup = deepcopy(self.groupGroup())
-        copied_group_group.flip_between_groups()
-        return copied_group_group
 
     def legible_groups(self) -> List:
         out = []
