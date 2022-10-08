@@ -60,8 +60,8 @@ class GroupGroup:
         """
 
         origin_group_idx = randint(0, self.__number_of_groups - 1) 
-        origin_group_idx = target_group_idx #This is to force a value and to emulate a do-while 
-        while origin_group_idx == target_group_idx:
+        target_group_idx = origin_group_idx  #This is to force a value and to emulate a do-while 
+        while target_group_idx == origin_group_idx:
             target_group_idx = randint(0, self.__number_of_groups - 1)
 
         self.__last_flip_origin_group_idx = origin_group_idx
@@ -69,7 +69,7 @@ class GroupGroup:
         self.__last_std = self.__std
         self.__last_score = self.__score
 
-        self.members[origin_group_idx].switch_member_with_other_group[self.members[target_group_idx]]
+        self.members[origin_group_idx].switch_member_with_other_group(self.members[target_group_idx])
         self.update_stadistics()
 
 

@@ -12,9 +12,7 @@ class Genetic:
     matrix_class: Matrix
 
     groupGroup: GroupGroup  # Selected groups.
-    current_score: int  # Score of the selected group
     switches: int  # Number of times that the group was changed (just for stats)
-    current_std: float  # Standard deviation of all the scores of all the sub-groups of the current solution
 
     def __init__(self, individuals :List[Individual], persons_per_group: int):
         self.persons_per_group = persons_per_group
@@ -48,25 +46,22 @@ class Genetic:
 
         number_of_loops = config_model.get_config_value(path=['app', 'number_of_loops'])
         for _ in range(number_of_loops):
-            candidate_group_group = self.create_group_group_by_crossing_over()
+            self.groupGroup.flip_between_groups()
             # If the score is better, switch.
             # If the score is the same but the std is lower, switch.
             # Otherwise, keep current solution
-            if candidate_group_group.get_score(get_cached_value=True) > self.current_score:
+            if self.groupGroup.get_score(get_cached_value=True) > self.groupGroup.__last_score:
                 is_candidate_group_better = True
-            elif candidate_group_group.get_score(get_cached_value=True) == self.current_score:
-                candidate_std = candidate_group_group.get_std(get_cached_value=True)
-                if candidate_std < self.current_std:
+            elif self.groupGroup.get_score(get_cached_value=True) == self.groupGroup.__last_score:
+                if self.groupGroup.get_std(get_cached_value=True) < self.groupGroup.__last_std:
                     is_candidate_group_better = True
                 else:
                     is_candidate_group_better = False
             else:
                 is_candidate_group_better = False
 
-            if is_candidate_group_better:
-                self.groupGroup = candidate_group_group
-                self.current_score = candidate_group_group.get_score(get_cached_value=True) 
-                self.current_std = candidate_group_group.get_std(get_cached_value=True)
+            if not is_candidate_group_better:
+                self.groupGroup.undo_last_flip()
                 self.switches += 1
 
 
