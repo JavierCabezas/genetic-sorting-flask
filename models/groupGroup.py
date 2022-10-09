@@ -72,9 +72,14 @@ class GroupGroup:
         self.members[origin_group_idx].switch_member_with_other_group(self.members[target_group_idx])
         self.update_stadistics()
 
+    def get_last_score(self) -> int:
+        return self.__last_score
+
+    def get_last_std(self) -> float:
+        return self.__last_std
 
     def undo_last_flip(self):
-        self.members[self.__last_flip_origin_group_idx].undo_last_switch(self.__last_flip_target_group_idx)
+        self.members[self.__last_flip_origin_group_idx].undo_last_switch(self.members[self.__last_flip_target_group_idx])
         
         #The update_statdistics() method is not called for performance
         self.__score = self.__last_score

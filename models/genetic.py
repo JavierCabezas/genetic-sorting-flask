@@ -50,10 +50,10 @@ class Genetic:
             # If the score is better, switch.
             # If the score is the same but the std is lower, switch.
             # Otherwise, keep current solution
-            if self.groupGroup.get_score(get_cached_value=True) > self.groupGroup.__last_score:
+            if self.groupGroup.get_score(get_cached_value=True) > self.groupGroup.get_last_score():
                 is_candidate_group_better = True
-            elif self.groupGroup.get_score(get_cached_value=True) == self.groupGroup.__last_score:
-                if self.groupGroup.get_std(get_cached_value=True) < self.groupGroup.__last_std:
+            elif self.groupGroup.get_score(get_cached_value=True) == self.groupGroup.get_last_score():
+                if self.groupGroup.get_std(get_cached_value=True) < self.groupGroup.get_last_std():
                     is_candidate_group_better = True
                 else:
                     is_candidate_group_better = False

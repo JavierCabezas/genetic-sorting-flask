@@ -23,12 +23,12 @@ class Group:
         self.__last_flip_origin_member_idx = 0
         self.__last_flip_target_member_idx = 0
 
-    def individuals_in_members(self) -> List[Individual]:
-        return [individualDict['individual'] for individualDict in self.members]
-
     def add_member(self, individual: Individual) -> None:
         self.members.append({'individual': individual, 'score': 0})
         self.update_stadistics()
+
+    def individuals_in_members(self) -> List[Individual]:
+        return [individualDict['individual'] for individualDict in self.members]
 
     def update_stadistics(self) -> None:
         scores = []

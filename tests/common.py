@@ -1,5 +1,6 @@
 from typing import Dict, Optional, List
 from models.group import Group
+from models.groupGroup import GroupGroup
 from models.matrix import Matrix
 from models.individual import Individual
 from models.preference import Preference
@@ -82,6 +83,11 @@ def create_group(*individuals: Individual):
         group.add_member(individual=individual)
     return group
 
+def create_groupgroup(*groups: Group):
+    groupgroup = GroupGroup()
+    for group in groups:
+        groupgroup.add_member(group=group)
+    return groupgroup
 
 def get_individual(name_of_individual: str):
     #For some reason I decided to invent a rivarly between the pika line and the nido line, I dunno.
@@ -118,7 +124,7 @@ def get_individual(name_of_individual: str):
             {'name':'pikachu', 'score':6, 'preference': 1},
             {'name':'raichu', 'score':4, 'preference': 2},
             {'name':'nidoking', 'score':-6, 'preference': -1},
-            {'name':'nidorino', 'score':-4, 'preference': -2},
+            {'name':'nidoqueen', 'score':-4, 'preference': -2},
         )
     if name_of_individual == 'pikachu':
         return create_individual('pikachu',
@@ -155,4 +161,3 @@ def get_individual(name_of_individual: str):
             ##Intentionally this preference is left blank
             ##Intentionally this preference is left blank
         )
-
