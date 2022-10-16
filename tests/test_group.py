@@ -66,6 +66,7 @@ def test_crossovers():
     assert pika_group.score == 30
     assert pika_group.std == 0
 
+    #Switch members between the nido and the pika group
     #Since the switch is random you must implement creative ways to see how well it worked
     nido_group.switch_member_with_other_group(pika_group)
     members_in_new_nido_group = nido_group.individuals_in_members()
@@ -75,10 +76,16 @@ def test_crossovers():
     assert not (nidoking in members_in_new_nido_group and nidoqueen in members_in_new_nido_group and nidoran in members_in_new_nido_group)
     assert not (pikachu in members_in_new_pika_group and pichu in members_in_new_pika_group and raichu in members_in_new_pika_group)
 
-    assert nido_group.score != 38
     assert nido_group.std != 2.309401076758503
-    assert pika_group.score != 30
     assert pika_group.std != 0 #Exactly the same values as before
+
+    #Check that the new values are exactly the new ones expected
+    score_new_nido_group = sum([
+        member.get_score(*(member.name for member in members_in_new_nido_group))
+        for member 
+        in members_in_new_nido_group
+    ])
+    assert nido_group.score == score_new_nido_group
 
     #Revert the crossover and everything should go back to normal
     nido_group.undo_last_switch(pika_group)

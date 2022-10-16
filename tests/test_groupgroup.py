@@ -23,3 +23,11 @@ def test_groups_score():
     total_score = terrible_group_1.score + terrible_group_2.score
     assert total_score == terrible_groupgroup.get_score()
     assert -12 == terrible_groupgroup.get_score()
+
+    ##Test that the score is updated after a flip
+    terrible_groupgroup.flip_between_groups()
+    assert total_score != terrible_groupgroup.get_score()
+    assert -12 != terrible_groupgroup.get_score()
+
+
+    
