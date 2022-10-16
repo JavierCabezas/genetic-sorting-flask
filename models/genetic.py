@@ -64,6 +64,9 @@ class Genetic:
                 self.groupGroup.undo_last_flip()
                 self.switches += 1
 
+        for group in self.groupGroup.members:
+            group.update_stadistics()
+
 
     def legible_groups(self) -> List:
         out = []

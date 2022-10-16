@@ -32,11 +32,11 @@ class Group:
 
     def update_stadistics(self) -> None:
         scores = []
-        for individualWithScore in self.members:
-            individualWithScore['score'] = self.get_score_by_individual_in_group(target_individual=individualWithScore['individual'])
-            scores.append(individualWithScore['score'])
+        for index in range(len(self.members)):
+            new_score = self.get_score_by_individual_in_group(target_individual=self.members[index]['individual'])
+            self.members[index].update({'score': new_score})    
+            scores.append(new_score)
         self.score = sum(scores)
-        self.scores = scores
         if len(scores) > 1:
             self.std = statistics.stdev(scores)
         self.__groupSize = len(self.members)
@@ -46,8 +46,7 @@ class Group:
         This score is the score given in the point of view of this invidual.
         This means, Does this individual like the other individuals in the group? 
         """
-        meber_names = [str(individual) for individual in self.individuals_in_members()] 
-        return target_individual.get_score(*meber_names)
+        return target_individual.get_score(*(str(individual) for individual in self.individuals_in_members()))
 
     def switch_member_with_other_group(self, group: Group) -> None:
         origin_member_idx = randint(0, self.__groupSize -1)

@@ -29,7 +29,6 @@ class Individual:
         Given this individual preferences, gets thee score for the names passed as arugment (Ex: 'Jane', 'Joe', 'Steve'...) 
         :names_in_group: 
         """
-        #Cambiar por una lambda sum function
         score = 0
         for preference in self.preferences:
             if preference.name in names_in_group:
