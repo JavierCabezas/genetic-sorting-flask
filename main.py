@@ -10,12 +10,11 @@ import json
 
 from functools import wraps
 
-from models.person import Person
+from models.matrix import Matrix
 from models.genetic import Genetic
 from models.fileHandler import FileHandler
 
 app = Flask(__name__)
-
 
 def redirect_to_home_if_get(f):
     @wraps(f)
@@ -36,17 +35,22 @@ def home():
 def process_file():
     file = request.files['file_to_upload']
     matrix = FileHandler.get_matrix_from_excel(file)
-    person_class = Person(matrix)
-    genetic_class = Genetic(person_class, int(request.form['persons_per_group']))
+    matrix_class = Matrix(matrix)
+    genetic_class = Genetic(matrix_class.individuals, int(request.form['persons_per_group']))
     genetic_class.calculate()
-    groups = genetic_class.legible_groups(genetic_class.groups)
+    groups = genetic_class.legible_groups()
 
     return render_template(
         "results.html",
-        genetic_class=genetic_class,
-        person_class=genetic_class.person_class,
         groups=groups,
-        parsed_groups=urllib.parse.quote(json.dumps(groups))
+        parsed_groups=urllib.parse.quote(json.dumps(groups)),
+        solution_score=genetic_class.groupGroup.get_score(),
+        input={
+            'persons_per_group': genetic_class.persons_per_group,
+            'number_of_persons': genetic_class.groupGroup.get_number_of_individuals(),
+            'number_of_sub_groups': len(genetic_class.groupGroup.members),
+            'individuals': genetic_class.groupGroup.get_all_individuals()
+        }
     )
 
 

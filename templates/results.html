@@ -1,56 +1,54 @@
 <!DOCTYPE html>
 <head>
-    <title>Resultado de super-armador de grupos</title>
+    <title>Results</title>
     <meta charset="utf-8">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/pure.min.css') }}">
 </head>
 <body>
-<div class="pure-g">
-    <div class="pure-u-5-5">
-        <h2>Datos de entrada:</h2>
-
-        <ul>
-            <li><b>Personas por grupo: </b> {{ genetic_class.persons_per_group }} </li>
-            <li><b>Número de personas: </b> {{ person_class.number_of_persons() }} </li>
-            <li><b>Número de grupos: </b> {{ genetic_class.number_of_sub_groups() }} </li>
-        </ul>
-
-        <table class="pure-table pure-table-bordered pure-table-striped">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Nombre</th>
-                <th>Primera preferencia</th>
-                <th>Segunda preferencia</th>
-                <th>Primera de-preferencia</th>
-                <th>Segunda de-preferencia</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for idx in range(0, person_class.number_of_persons()) %}
-                {% set person = person_class.persons[idx] %}
-                {% set pref_key = person_class.INDEX_PREFERENCES %}
+    <div class="pure-g">
+        <div class="pure-u-5-5">
+            <h2>Input:</h2>
+    
+            <ul>
+                <li><b>Persons per group: </b> {{ input['persons_per_group'] }} </li>
+                <li><b>Number of persons: </b> {{ input['number_of_persons'] }} </li>
+                <li><b>Group number: </b> {{ input['number_of_sub_groups'] }} </li>
+            </ul>
+    
+            <table class="pure-table pure-table-bordered pure-table-striped">
+                <thead>
                 <tr>
-                    <td> {{ idx }}</td>
-                    <td> {{ person[person_class.INDEX_NAME] }} </td>
-                    {% for preference_idx in person_class.INDEXES_PREFERENCES %}
-                        {% set prefered_person_id = person[pref_key][preference_idx] %}
-                        <td> {{ person_class.get_name_from_person_id(prefered_person_id) }} </td>
+                    <th>Name</th>
+                    {% for pref_number in range(input['persons_per_group'], 1, -1) %}
+                        <th> {{ (pref_number-1) * '👍'}}</th>
                     {% endfor %}
+                    {% for depref_number in range(input['persons_per_group'], 1, -1) %}
+                        <th> {{ (depref_number-1) * '👎'}}</th>
+                    {% endfor %}      
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for individual in input['individuals'] %}
+                    <tr>
+                        <td> {{ individual.name }} </td>
+                        {% for pref_number in range(input['persons_per_group']-1, 0, -1) %}
+                            <td> {{ individual.preference_by_value(pref_number).name }}</td>
+                        {% endfor %}
+                        {% for depref_number in range(input['persons_per_group']-1, 0, -1) %}
+                            <td> {{ individual.preference_by_value(-1 * depref_number).name }}</td>
+                        {% endfor %} 
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-
-
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
 <h1>Output:</h1>
 
-<h3> Solution score: <b> 12 </b></h3>
+<h3> Solution score: <b> {{ solution_score }} </b></h3>
 <form class="pure-form pure-form-aligned"
     action="download"
     method="POST"
@@ -70,15 +68,15 @@
                     <th>Score</th>
                 </tr>
                 <tbody>
-                {% for student_data in group['rows'] %}
+                {% for individualAndScore in group['rows'] %}
                     <tr>
-                        <td> {{ student_data['name'] }} </td>
-                        <td> {{ student_data['score'] }} </td>
+                        <td> {{ individualAndScore['name'] }} </td>
+                        <td> {{ individualAndScore['score'] }} </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
-            <p><b>Puntaje grupo:</b> {{ group['group_score'] }} </p>
+            <p><b>Group score:</b> {{group.group_score}} </p>
         </div>
     {% endfor %}
 </div>

@@ -1,123 +1,85 @@
-import random
-import statistics
-
-from typing import List, Dict
-from .person import Person
+from .matrix import Matrix
 from .config import Config
+from .group import Group
+from .groupGroup import GroupGroup
+from .individual import Individual
+
+from typing import List
+
 
 class Genetic:
     persons_per_group: int
-    person_class: Person
+    matrix_class: Matrix
 
-    groups: List  # Selected groups.
-    current_score: int  # Score of the selected group
+    groupGroup: GroupGroup  # Selected groups.
     switches: int  # Number of times that the group was changed (just for stats)
-    current_std: float  # Standard deviation of all the scores of all the sub-groups of the current solution
 
-    def __init__(self, person: Person, persons_per_group: int):
+    def __init__(self, individuals :List[Individual], persons_per_group: int):
         self.persons_per_group = persons_per_group
-        self.person_class = person
+        self.groupGroup = self.get_initial_group_groups(individuals)
+
+    def get_initial_group_groups(self, persons :List[Individual]):
+        """
+        Generates the initial groups. 
+        Ex: If group size = 3 and Persons = [P1, P2, P3, P4, P5, P6, P7, P8] it generates the groups
+        Group 2 = [1,2,3], Group 2 = [4,5,6], Group 3 = [7,8]
+        """
+        group_group_to_return = GroupGroup()
+        groups_to_add = [persons[i:i + self.persons_per_group] for i in range(0, len(persons), self.persons_per_group)]
+        for group_to_add in groups_to_add:
+            new_group = Group()
+            for individual in group_to_add:
+                new_group.add_member(individual=individual)
+            group_group_to_return.add_member(new_group)
+        return group_group_to_return
+
 
     def calculate(self):
         """
         Returns the best possible group found within the number of loops configured
         """
-        person_indexes = list(self.person_class.person_cache_dict_name_index.values())
-        population_size = len(person_indexes)
         config_model = Config()
 
-        self.groups = person_indexes
-        self.current_score = self.get_groups_score(self.get_sub_groups(self.groups))
-        self.current_std = self.get_sub_group_std(self.get_sub_groups(self.groups))
         self.switches = 0
+        if len(self.groupGroup.members) < 2:
+            pass #Can't optimize if there are less than two groups
+
         number_of_loops = config_model.get_config_value(path=['app', 'number_of_loops'])
         for _ in range(number_of_loops):
-            candidate_group = self.create_group_by_crossing_over(population_size)
-            candidate_score = self.get_groups_score(self.get_sub_groups(candidate_group))
+            self.groupGroup.flip_between_groups()
             # If the score is better, switch.
             # If the score is the same but the std is lower, switch.
             # Otherwise, keep current solution
-            if candidate_score > self.current_score:
+            if self.groupGroup.get_score(get_cached_value=True) > self.groupGroup.get_last_score():
                 is_candidate_group_better = True
-            elif candidate_score == self.current_score:
-                candidate_std = self.get_sub_group_std(self.get_sub_groups(candidate_group))
-                if candidate_std < self.current_std:
+            elif self.groupGroup.get_score(get_cached_value=True) == self.groupGroup.get_last_score():
+                if self.groupGroup.get_std(get_cached_value=True) < self.groupGroup.get_last_std():
                     is_candidate_group_better = True
                 else:
                     is_candidate_group_better = False
             else:
                 is_candidate_group_better = False
 
-            if is_candidate_group_better:
-                self.groups = candidate_group
-                self.current_score = candidate_score
-                self.current_std = self.get_sub_group_std(self.get_sub_groups(self.groups))
+            if not is_candidate_group_better:
+                self.groupGroup.undo_last_flip()
                 self.switches += 1
 
-    def create_group_by_crossing_over(self, population_size: int) -> List:
-        number_of_flips = random.randint(1, population_size)
-        out = self.groups.copy()
-        for _ in range(number_of_flips):
-            origin_person_idx = random.randint(0, population_size - 1)
-            target_person_idx = random.randint(0, population_size - 1)
-            out[origin_person_idx], out[target_person_idx] = out[target_person_idx], out[origin_person_idx]
-        return out
+        for group in self.groupGroup.members:
+            group.update_stadistics()
 
-    def get_sub_groups(self, ids: List) -> List:
-        """
-        Receives a list of person_id and returns the sub-groups
-        Ex: If group size = 3 and ids = [1, 2, 3, 4, 5, 6, 7, 8] returns [[1,2,3], [4,5,6], [7,8]]
-        :param ids:
-        :return:
-        """
-        return [ids[i:i + self.persons_per_group] for i in range(0, len(ids), self.persons_per_group)]
 
-    def legible_groups(self, groups: List) -> List:
+    def legible_groups(self) -> List:
         out = []
-        for student_id_list_in_group in self.get_sub_groups(groups):
-            #student_id_list_in_group is a list of students ids that are in the resulting group (Ex: [2, 4, 10] for a group for the 3 students with those ids)
+        for group in self.groupGroup.members:
             to_add = {
                 'rows': [],
-                'group_score' : self.get_groups_score([student_id_list_in_group])
+                'group_score' : group.score
             }
-            for student_id in student_id_list_in_group:
-                preferences = self.person_class.persons[student_id][self.person_class.INDEX_PREFERENCES]
+            for individualWithScore in group.members:
                 to_add['rows'].append({
-                    'name': self.person_class.get_name_from_person_id(student_id),
-                    'score': self.person_class.get_score_from_person_perspective(student_id_list_in_group, preferences)
+                    'name': str(individualWithScore['individual']),
+                    'score': individualWithScore['score']
                 }),
             out.append(to_add)
 
         return out
-
-    def number_of_sub_groups(self) -> int:
-        """
-        :return: int
-        """
-        return len(self.get_sub_groups(self.groups))
-
-    def get_sub_group_std(self, separated_groups: List):
-        """
-        Gets the standard deviation of the scores of each of the sub-groups of the groups array
-        :param separated_groups:
-        :return:
-        """
-        scores = [self.get_groups_score([group]) for group in separated_groups]
-        return statistics.stdev(scores)
-
-    def get_groups_score(self, groups: List) -> int:
-        """
-        Receives a list of sub-groups and returns the added up score of each of these sub-groups
-        :param groups:
-        :param person_class:
-        :return:
-        """
-        total_score = 0
-        for group in groups:
-            # The sub-group contains a group of person_ids
-            for selected_person_id in group:
-                total_score += self.person_class.get_score_from_person_perspective(
-                    target_person_ids=group,
-                    origin_person_preferences=self.person_class.persons[selected_person_id][self.person_class.INDEX_PREFERENCES],
-                )
-        return total_score

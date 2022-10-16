@@ -1,4 +1,10 @@
-from models.person import Person
+from typing import Dict, Optional, List
+from models.group import Group
+from models.groupGroup import GroupGroup
+from models.matrix import Matrix
+from models.individual import Individual
+from models.preference import Preference
+
 from random import randint
 
 EXAMPLE_MATRIX_2PREF = [
@@ -45,9 +51,9 @@ def generate_matrix_of_size(number_of_prefs :int) -> list:
 
     return matrix
 
-def get_initialized_person(number_of_prefs :int) -> Person:
+def get_initialized_matrix(number_of_prefs :int) -> Matrix:
     matrix = EXAMPLE_MATRIX_2PREF if number_of_prefs == 2 else generate_matrix_of_size(number_of_prefs=number_of_prefs)
-    return Person(matrix, number_of_preferences=number_of_prefs)
+    return Matrix(matrix, number_of_preferences=number_of_prefs)
 
 def get_score_per_preferece_dict(number_of_prefs :int) -> dict:
     """
@@ -57,10 +63,101 @@ def get_score_per_preferece_dict(number_of_prefs :int) -> dict:
     }
     It starts counting from 1 (and, since the first column of the excel is unused, the first preference value has an index of 2)
     """
-    person_class = get_initialized_person(number_of_prefs)
+    person_class = get_initialized_matrix(number_of_prefs)
     out = {}
     for i in range(number_of_prefs):
         out[i+2] = person_class.get_pref_score(i+1)
     for i in range(number_of_prefs):
         out[i+2+number_of_prefs] = person_class.get_pref_score(-1*(i+1))
     return out
+
+def create_individual(name:str = 'Individual', *preferences: Dict) -> Individual:
+    individual = Individual(name=name)
+    for preference in preferences:
+        individual.add_preference(name=preference['name'], score=preference['score'], preference=preference['preference'])
+    return individual
+
+def create_group(*individuals: Individual):
+    group = Group()
+    for individual in individuals:
+        group.add_member(individual=individual)
+    return group
+
+def create_groupgroup(*groups: Group):
+    groupgroup = GroupGroup()
+    for group in groups:
+        groupgroup.add_member(group=group)
+    return groupgroup
+
+def get_individual(name_of_individual: str):
+    #For some reason I decided to invent a rivarly between the pika line and the nido line, I dunno.
+    if name_of_individual == 'nidoking':
+        return create_individual('nidoking',
+            {'name':'nidoqueen', 'score':10, 'preference': 1},
+            {'name':'nidoran', 'score':4, 'preference' : 2},
+            {'name':'pikachu', 'score':-6, 'preference' : -1},
+            {'name':'raichu', 'score':-3, 'preference': -2}
+        )
+    if name_of_individual == 'nidoqueen':
+        return create_individual('nidoqueen',
+            {'name':'nidoran', 'score':8, 'preference': 1},
+            {'name':'nidoking', 'score':6, 'preference': 2},
+            ##Intentionally this preference is left blank
+            {'name':'pichu', 'score':-3, 'preference' : -2},
+        )
+    if name_of_individual == 'nidoran':
+        return create_individual('nidoran', 
+            {'name':'nidoking', 'score':6, 'preference': 1},
+            {'name':'nidoqueen', 'score':4, 'preference': 2},
+            ##Intentionally this preference is left blank
+            ##Intentionally this preference is left blank
+        )
+    if name_of_individual == 'raichu':
+        return create_individual('raichu',
+            {'name':'pikachu', 'score':6, 'preference': 1},
+            {'name':'pichu', 'score':4, 'preference': 2},
+            {'name':'nidoking', 'score':-6, 'preference': -1},
+            ##Intentionally this preference is left blank
+        )
+    if name_of_individual == 'pichu':
+        return create_individual('pichu',
+            {'name':'pikachu', 'score':6, 'preference': 1},
+            {'name':'raichu', 'score':4, 'preference': 2},
+            {'name':'nidoking', 'score':-6, 'preference': -1},
+            {'name':'nidoqueen', 'score':-4, 'preference': -2},
+        )
+    if name_of_individual == 'pikachu':
+        return create_individual('pikachu',
+            {'name':'pichu', 'score':6, 'preference': 1},
+            {'name':'raichu', 'score':4, 'preference': 2},
+            ##Intentionally this preference is left blank
+            ##Intentionally this preference is left blank
+        )
+    if name_of_individual == 'pachirisu':
+        return create_individual('pachirisu',
+            {'name':'pichu', 'score':6, 'preference': 1},
+            {'name':'pikachu', 'score':4, 'preference': 2},
+            ##Intentionally this preference is left blank
+            {'name':'raichu', 'score':-4, 'preference': -2},
+        )
+    if name_of_individual == 'plusle':
+        return create_individual('plusle',
+            {'name':'minum', 'score':6, 'preference': 1},
+            {'name':'pichu', 'score':4, 'preference': 2},
+            ##Intentionally this preference is left blank
+            ##Intentionally this preference is left blank
+        )
+    if name_of_individual == 'minum':
+        return create_individual('minum',
+            {'name':'plusle', 'score':6, 'preference': 1},
+            {'name':'pichu', 'score':4, 'preference': 2},
+            ##Intentionally this preference is left blank
+            ##Intentionally this preference is left blank
+        )
+    if name_of_individual == 'ditto':
+        return create_individual('ditto',
+            ##Intentionally this preference is left blank
+            ##Intentionally this preference is left blank
+            ##Intentionally this preference is left blank
+            ##Intentionally this preference is left blank
+        )
