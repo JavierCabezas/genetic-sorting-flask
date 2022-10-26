@@ -3,12 +3,8 @@ services:
     container_name: genetic
     build:
       context: ./
-#      target: prod
-      target: debug
-    environment:
-      FLASK_DEBUG: 1
     volumes:
     - ./:/work
     ports:
       - 5000:5000
-      - 5678:5678
+    image: jcleyton/genetic_flask
