@@ -7,4 +7,3 @@ services:
     - ./:/work
     ports:
       - 5000:5000
-    image: jcleyton/genetic_flask
